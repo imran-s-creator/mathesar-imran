@@ -2,9 +2,8 @@ import { get } from 'svelte/store';
 import { _ } from 'svelte-i18n';
 
 import { iconDeleteMajor } from '@mathesar/icons';
-import { confirm } from '@mathesar/stores/confirmation';
 import type { TabularData } from '@mathesar/stores/table-data';
-import { toast } from '@mathesar/stores/toast';
+import { deleteRecords as deleteRecordsAction } from '@mathesar/systems/table-view/row/rowActions';
 import { buttonMenuEntry } from '@mathesar-component-library';
 
 export function* deleteRecords(p: {
@@ -21,19 +20,7 @@ export function* deleteRecords(p: {
       values: { count: p.rowIds.length },
     }),
     onClick: () => {
-      void confirm({
-        title: get(_)('delete_records_question', {
-          values: { count: p.rowIds.length },
-        }),
-        body: [
-          get(_)('deleted_records_cannot_be_recovered', {
-            values: { count: p.rowIds.length },
-          }),
-          get(_)('are_you_sure_to_proceed'),
-        ],
-        onProceed: () => p.tabularData.recordsData.deleteSelected(p.rowIds),
-        onError: (e) => toast.fromError(e),
-      });
+      deleteRecordsAction(p.tabularData, p.rowIds);
     },
   });
 }
